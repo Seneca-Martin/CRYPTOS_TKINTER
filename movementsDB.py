@@ -78,7 +78,7 @@ def listCryptos():
     return cryptos
 
 def listCryptosInvert():
-    #Entrega lista con symbol y nombre de cryptos en las que ya se ha invertido mas los Euros---------------
+    #Entrega lista con symbol y nombre de cryptos en las que ya se ha invertido mas los Euros
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
 

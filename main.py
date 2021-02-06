@@ -107,8 +107,8 @@ class NewTransaction(ttk.Frame):
         ttk.Frame.__init__(self, height=100, width =_width, borderwidth=1, relief= GROOVE)
         self.simulador=parent
 
-        self.s = ttk.Style() #Creamos el style paa este frame ------
-        self.s.configure('TFrame', background='#F3F2EF') #aplicamos el stylo---------
+        self.s = ttk.Style() #Creamos el style
+        self.s.configure('TFrame', background='#F3F2EF')
 
         #variables de control
         self.strFrom_Q = StringVar(value='')
@@ -182,7 +182,6 @@ class NewTransaction(ttk.Frame):
                 self.floatFrom_Q = float(self.strFrom_Q.get())
                 self.strFrom_Q.set(self.strCleaner())
                 self.strOldFrom_Q = self.strFrom_Q.get()
-                #if float(self.strFrom_Q.get())<= self.cryptoInvertida:
                 self.acceptButton.config(state= 'enable')
                 self.controlErrorCryptos.config(text=' ')
             except:
@@ -206,15 +205,12 @@ class NewTransaction(ttk.Frame):
                 return (TRUE)
             else:
                 if self._from == self._to:
-                    #self.controlErrorCryptos.config(text='Los campos From y To deben ser distintos')
                     self.controlErrorCryptos.config(messagebox.showinfo(message="¿De veras quieres invertir en la misma moneda? Los campos From y To deben ser distintos", title="¡¡Ups, algo falla!!"))
                 if self.strFrom_Q.get() == '0' or self.strFrom_Q.get() =='':
-                    #self.controlErrorCryptos.config(text='{} El valor Q debe ser mayor que 0. '.format(self.controlErrorCryptos.config('text')[4]))
                     self.controlErrorCryptos.config(messagebox.showinfo(message="¡Que pasa!, ¿no encuentras nada en la hucha? Para invertir el valor Q debe ser mayor que 0", title="¡¡Ups, algo falla!!"))
                 self.acceptButton.config(state='disable')
                 return(FALSE)    
         else:
-            #self.controlErrorCryptos.config(text ='Los campos From y To deben estar informados.')
             self.controlErrorCryptos.config(messagebox.showerror(message="Los campos From y To deben estar informados", title="¡¡Ups, algo falla!!"))
             return(FALSE)   
 
@@ -229,7 +225,6 @@ class NewTransaction(ttk.Frame):
             self.cryptoInvertida = calculateCryptoto - calculateCryptofrom
             if self.cryptoInvertida < float(self.strFrom_Q.get()):
                 self.acceptButton.config(state= 'disable')
-                #self.controlErrorCryptos.config(text='Actualmente dispones de {} {}. Modifique el valor para realizar la transacción'.format(self.cryptoInvertida,self._from))
                 self.controlErrorCryptos.config(messagebox.showinfo(message="Actualmente dispones de {} {}. Modifica el valor para realizar la transacción".format(self.cryptoInvertida,self._from), title="¡¡Ups, algo falla!!"))
                 return(FALSE)
             else:
@@ -267,7 +262,6 @@ class NewTransaction(ttk.Frame):
                     self.valuesComboBox()
             except Exception as e:
                 error=('Se ha producido una incidencia:',e)
-                #self.controlErrorCryptos.config(text=error)
                 self.controlErrorCryptos.config(messagebox.showerror(message="Se ha producido una Incidencia", title="¡¡Ups, algo falla!!"))
 
     def addNewTransactionIntoDB(self,symbolCrypto_from, symbolCrypto_to):
@@ -294,7 +288,6 @@ class NewTransaction(ttk.Frame):
         resultFrom = movementsDB.listCryptosInvert()
         self.toCryptoCombo.config(values=result)
         self.fromCryptoCombo.config(values=resultFrom)
-        #self.fromCryptoCombo.config(values=result)
 
     def switchNewTransaction(self, switch_On = FALSE , transactionButton=FALSE):
         #interruptor que activa y desactiva el frame newtransaction, tambien desactiva el boton de nueva transacción hasta que cancela o se realiza la nueva transaccion
@@ -405,15 +398,12 @@ class Simulador(ttk.Frame):
         self.Button1.place(x=735, y=250)
 
         self.movements =Movements(self, height=240, width=_width)
-        #self.movements.grid(column=0, row=0, padx=20)
         self.movements.place(x=40,y=30)
         
         self.newTransaction= NewTransaction(self, height=220, width=_width)
-        #self.newTransaction.grid(column=0, row=1, padx=20)
         self.newTransaction.place(x=40, y=290) 
 
         self.results = Results(self, height=100, width=_width)
-        #self.results.grid(column=0, row=2, pady=40)
         self.results.place(x=40, y=500)
 
     def addNewMovementintoMovement(self):
@@ -459,9 +449,7 @@ class MainApp(Tk):
         self.resizable(0,0)
         self.simulador = Simulador(self)
         self.simulador.place(x=0, y=0)
-
-        s = ttk.Style() # ------
-        s.theme_use('aqua') # -------
+        
 
     def start(self):
         self.mainloop()
