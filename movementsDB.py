@@ -3,7 +3,7 @@ import sqlite3
 database = ('data/movements.db')
 
 def inicialVerification():
-    #para saber si la DB está vacía o ya está informada
+    #Comprobamos si la DB está vacía o informada
     conn = sqlite3.connect(database)
     cursor =  conn.cursor()
 
@@ -19,7 +19,7 @@ def inicialVerification():
         return True
 
 def CryptosDBInformed(cryptos):
-    #grabamos todas las cryptos obtenidas de la api en DBcryptos
+    #Guadamos las cryptos obtenidas de la API en DBcryptos
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
 
@@ -27,7 +27,7 @@ def CryptosDBInformed(cryptos):
             INSERT into cryptos
             (symbol, name)
             values (?, ?);
-           '''
+            '''
 
     try:
         for i in range (len(cryptos)):
@@ -38,13 +38,34 @@ def CryptosDBInformed(cryptos):
     conn.commit()
     conn.close()
 
-def listCryptos():
-    #devuelve una lista con el symbol y nombre de las cryptos que existen en DBcryptos
+def listCryptosIni():
+    #Entrega symbol y nombre de la moneda Euros para la primera operación debido a que la tabla To_Currency está vacia---------------
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
 
     query = '''
-            SELECT symbol, name FROM cryptos;
+        SELECT symbol, name
+        FROM cryptos  
+        WHERE cryptos.id=13;
+    '''
+    rows=cursor.execute(query)
+    cryptosInverts=[]
+    text=''
+
+    for row in rows:
+        text= '{} - {}'.format(row[0], row[1])
+        cryptosInverts.append(text)
+
+    conn.close()
+    return cryptosInverts
+
+def listCryptos():
+    #Entrega lista con symbol y nombre de cryptos que hay en DBcryptos
+    conn = sqlite3.connect(database)
+    cursor = conn.cursor()
+
+    query = '''
+            SELECT symbol, name FROM cryptos ORDER BY symbol;
     '''
     rows=cursor.execute(query)
     cryptos=[]
@@ -56,8 +77,29 @@ def listCryptos():
     conn.close()
     return cryptos
 
+def listCryptosInvert():
+    #Entrega lista con symbol y nombre de cryptos en las que ya se ha invertido mas los Euros---------------
+    conn = sqlite3.connect(database)
+    cursor = conn.cursor()
+
+    query = '''
+        SELECT DISTINCT symbol, name
+        FROM cryptos INNER JOIN movements
+        WHERE  to_currency= cryptos.id OR cryptos.id=13 ORDER BY symbol;
+    '''
+    rows=cursor.execute(query)
+    cryptosInverts=[]
+    text=''
+    for row in rows:
+        text= '{} - {}'.format(row[0], row[1])
+        cryptosInverts.append(text)
+
+    conn.close()
+    return cryptosInverts
+
+
 def printMovementsDB():
-    #devuelve todos los movimientos que hay en DB
+    #devuelve movimientos existentes en DB
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
 
@@ -72,14 +114,14 @@ def printMovementsDB():
     return(movements) 
 
 def addNewMovement(data, time, from_currency, to_currency,from_quantity, to_quantity):
-   #añadidmos un nuevo movimiento en DB
+    #añadir nuevo movimiento en DB
     conn =  sqlite3.connect(database)
     cursor = conn.cursor()
 
     query = '''
         INSERT INTO movements
-               (date, time, from_currency, from_quantity, to_currency, to_quantity)
-               values (?, ?, ?, ?, ?, ?);
+            (date, time, from_currency, from_quantity, to_currency, to_quantity)
+            values (?, ?, ?, ?, ?, ?);
             '''
     try:
         rows = cursor.execute(query, (  data,
@@ -89,6 +131,7 @@ def addNewMovement(data, time, from_currency, to_currency,from_quantity, to_quan
                                         to_currency,
                                         to_quantity,
         ))
+
     except sqlite3.Error as e:
         
         print('Error en base de datos : {}'.format(e))
@@ -97,7 +140,7 @@ def addNewMovement(data, time, from_currency, to_currency,from_quantity, to_quan
     conn.close()
 
 def MoneySpend(crypto, isfrom=True ):
-    #buscamos en la DB y devolvemos la suma de todos las cantidades de una misma momenda en to (isfrom=false) o en from(isfrom=true) 
+    #busca en Base de Datos y devuelve la suma de las cantidades de una misma momenda en to (isfrom=false) o en from(isfrom=true) 
     if isfrom:
         fieldSelect = 'from_quantity'
         fieldWhere = 'from_currency'
@@ -131,7 +174,7 @@ def MoneySpend(crypto, isfrom=True ):
     return(valor)
 
 def getIdFromToCryptoDB(crypto, isCrytpo = True):
-    # obtenemos en symbolo a partir de la id o al contrario dependiendo de si isCrypto
+    # obteniendo el symbolo por el id o al reves dependiendo de si isCrypto
     if isCrytpo:
         fieldSelect = 'id'
         fieldWhere = 'symbol'
@@ -150,9 +193,9 @@ def getIdFromToCryptoDB(crypto, isCrytpo = True):
     cursor.execute(query,(crypto,))
     n=cursor.fetchone()
     return (n[0])
-  
+
 def symbolCrytpo():
-    #obtenemos el symbol de las cryptos en la tabla cryptos
+    #obteniendo los symbol de las cryptos de la tabla
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
 
