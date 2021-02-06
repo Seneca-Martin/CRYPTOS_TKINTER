@@ -5,7 +5,7 @@ def accesError(Exception):
     self.cause = cause
 
 def accesoAPI(url):
-    #con la url que le pasamos hace la llamada
+    #se hace la llamada con la url facilitada
     try:
         response= requests.get(url)    
     except requests.exceptions.ConnectionError as e:
